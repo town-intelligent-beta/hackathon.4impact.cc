@@ -96,34 +96,32 @@ export function list_plan_tasks(uuid, parent = 0) {
   return returnDataJSON;
 }
 
-export function list_plans(email = null, sdg = null) {
-  // Check required field and save to JSON struct
+export function list_plans(email = null, sdg = null, page = 1, page_size = 9) {
   var dataJSON = {};
 
-  if (email != null) {
-    dataJSON.email = email;
-  }
-
-  if (sdg != null) {
-    dataJSON.sdg = sdg;
-  }
+  if (email != null) dataJSON.email = email;
+  if (sdg != null) dataJSON.sdg = sdg;
+  if (page != null) dataJSON.page = page;
+  if (page_size != null) dataJSON.page_size = page_size;
 
   $.ajax({
     url: HOST_URL_TPLANET_DAEMON + "/projects/projects",
     type: "POST",
     async: false,
     crossDomain: true,
-    data:  dataJSON,
+    data: dataJSON,
     success: function(returnData) {
-       const obj = JSON.parse(returnData);
-       dataJSON = obj;
+      const obj = JSON.parse(returnData);
+      dataJSON = obj;
     },
     error: function(xhr, ajaxOptions, thrownError){
       console.log(thrownError);
     }
   });
+
   return dataJSON;
 }
+
 
 export function append_plan_submit_data(page, form) {
   if (page == "cms_plan_info.html") {

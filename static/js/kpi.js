@@ -121,38 +121,37 @@ export function draw_comm_chart(totalProjectWeight) {
 }
 
 export function set_page_info_kpi() {
-  // Get all projects
+  // 只撈第一頁，不跑 while loop
   var list_project_uuids = [];
+
   for (var index = 0; index < SITE_HOSTERS.length; index++) {
     try {
-      var obj_list_projects = list_plans(SITE_HOSTERS[index], null);
-      list_project_uuids = list_project_uuids.concat(obj_list_projects.projects);
-    } catch(e) { console.log(e) }
+      // 只取第 1 頁 3 筆
+      var obj_list_projects = list_plans(SITE_HOSTERS[index], null, 1, 3);
+      if (obj_list_projects.projects && obj_list_projects.projects.length > 0) {
+        list_project_uuids = list_project_uuids.concat(obj_list_projects.projects);
+      }
+    } catch (e) { console.log(e); }
   }
 
-  // Page info
+  // ✅ 渲染：第 1 頁 3 筆
   set_page_info_project_list();
 
-  // Get total project weight
+  // === 以下維持原邏輯 ===
   var totalProjectWeight = get_total_project_weight(list_project_uuids);
-
-  // Set relate people and project counts
   set_relate_people_and_project_counts(totalProjectWeight, list_project_uuids);
 
-  // SDGS
   var totalProjectWeight_for_sdgs = Object.assign({}, totalProjectWeight);
   draw_sdgs_chart(totalProjectWeight_for_sdgs);
 
-  // 德智體群美
   if (WEIGHT[1] == 1) {
-    var totalProjectWeight_for_five = Object.assign({}, totalProjectWeight)
+    var totalProjectWeight_for_five = Object.assign({}, totalProjectWeight);
     $('#chart_weight_five').css('display', 'block');
     draw_five_chart(totalProjectWeight_for_five);
   }
 
-  // 人文地產景
   if (WEIGHT[2] == 1) {
-    var totalProjectWeight_for_comm = Object.assign({}, totalProjectWeight)
+    var totalProjectWeight_for_comm = Object.assign({}, totalProjectWeight);
     $('#chart_weight_comm').css('display', 'block');
     draw_comm_chart(totalProjectWeight_for_comm);
   }
